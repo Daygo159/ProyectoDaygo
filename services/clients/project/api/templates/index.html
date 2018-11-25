@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Microservicios con flask y docker</title>
+    <!-- meta -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- styles -->
+    <link
+      href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css"
+      rel="stylesheet"
+    >
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <div class="container">
+      <div class="column is-one-third">
+        <br>
+        <h1 class="title">Registrar Cliente</h1>
+        <hr><br>
+        <form action="/" method="POST">
+          <div class="field">
+            <input
+              name="nombre" class="input"
+              type="text" placeholder="Nombre del cliente" required>
+          </div>
+          <div class="field">
+            <input
+              name="apellidos" class="input"
+              type="text" placeholder="apellidos del cliente" required>
+          </div>
+           <div class="field">
+            <input
+              name="sexo" class="input"
+              type="text" placeholder="Sexo del cliente" required>
+          </div>
+           <div class="field">
+            <input
+              name="dni" class="input"
+              type="text" placeholder="DNI del cliente" required>
+          </div>
+          <div class="field">
+            <input
+              name="celular" class="input"
+              type="text" placeholder="Celular del cliente" required>
+          </div>
+          <div class="field">
+            <input
+              name="email" class="input"
+              type="email" placeholder="Entre una dirección email" required>
+          </div>
+          <input
+            type="submit" class="button is-primary is-fullwidth"
+            value="Submit">
+        </form>
+        <br>
+
+
+        <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">nombre</th>
+      <th scope="col">apellidos</th>
+      <th scope="col">dni</th>
+      <th scope="col">sexo</th>
+      <th scope="col">celular</th>
+      <th scope="col">email</th>
+    </tr>
+  </thead>
+
+{% if clients %}
+  <tbody>
+
+    {% for client in clients %}
+    <tr>
+      <th scope="row">{{client.id}}</th>
+      <td>{{client.nombre}}</td>
+      <td>{{client.apellidos}}</td>
+      <td>{{client.dni}}</td>
+       <td>{{client.sexo}}</td>
+        <td>{{client.celular}}</td>
+         <td>{{client.email}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% else %}
+            <p>No users!</p>
+          {% endif %}
+</table>
+     
+    </div>
+    </script>
+    {% block js %}{% endblock %}
+  </body>
+</html>
+

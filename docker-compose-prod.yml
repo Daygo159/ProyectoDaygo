@@ -1,0 +1,41 @@
+version: '3.0'
+
+services:
+
+  clients:
+    build:
+      context: ./services/clients
+      dockerfile: Dockerfile-dev
+    volumes:
+      - './services/clients:/usr/src/app'
+    ports:
+      - 5001:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@clients-db:5432/clients_dev
+      - DATABASE_TEST_URL=postgres://postgres:postgres@clients-db:5432/clients_test
+    depends_on:  # <-- nuevo
+      - clients-db
+
+  clients-db:  # <-- nuevo
+    build:
+      context: ./services/clients/project/db
+      dockerfile: Dockerfile
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile-dev
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - clients
+
+
