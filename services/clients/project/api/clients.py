@@ -42,6 +42,7 @@ def add_cliente():
             response_object['estado'] = 'satisfactorio'
             return jsonify(response_object), 201
         else:
+            
             return jsonify(response_object), 400
     except exc.IntegrityError as e:
         db.session.rollback()
