@@ -8,7 +8,7 @@ class Cliente(db.Model):
     __tablename__ = 'clients'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nombre= db.Column(db.String(128), nullable=False)
+    nombre = db.Column(db.String(128), nullable=False)
     apellidos = db.Column(db.String(128), nullable=False)
     dni = db.Column(db.String(128), nullable=False)
     sexo = db.Column(db.String(128), nullable=False)
@@ -32,5 +32,5 @@ class Cliente(db.Model):
         self.apellidos = apellidos
         self.dni = dni
         self.sexo = sexo
-        self.celular  = celular 
+        self.celular = celular
         self.email = email

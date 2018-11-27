@@ -9,8 +9,18 @@ import unittest
 from project.tests.base import BaseTestCase
 
 
-def add_cliente(nombre, apellidos, dni, sexo, celular, email):
-    clien = Cliente(nombre=nombre, apellidos=apellidos, dni=dni, sexo=sexo, celular=celular, email=email)
+def add_cliente(nombre,
+                apellidos,
+                dni,
+                sexo,
+                celular,
+                email):
+    clien = Cliente(nombre=nombre,
+                    apellidos=apellidos,
+                    dni=dni,
+                    sexo=sexo,
+                    celular=celular,
+                    email=email)
     db.session.add(clien)
     db.session.commit()
     return clien
@@ -28,23 +38,24 @@ class TestClienteService(BaseTestCase):
         self.assertIn('satisfactorio', data['estado'])
 
     def test_add_cliente(self):
-        """Asegurando de que se pueda agregar un nuevo cliente a la base de datos."""
+        """Asegurando de que se pueda agregar un nuevo cliente a
+        la base de datos."""
         with self.client:
             response = self.client.post(
                 '/clients',
                 data=json.dumps({
                     'nombre': 'abel',
-                    'apellidos': 'abel huanca',
-                    'dni': '51452452',
+                    'apellidos': 'huanca',
+                    'dni': '514',
                     'sexo': 'F',
-                    'celular': '985224855',
-                    'email': 'abel.huanca@upeu.edu.pe'
+                    'celular': '985',
+                    'email': 'huanca@upeu.edu.pe'
                 }),
                 content_type='application/json',
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
-           
+            self.assertIn('satisfactorio', data['estado'])
 
     def test_add_cliente_invalid_json(self):
         """Asegurando de que se arroje un error si el objeto json esta
@@ -57,7 +68,6 @@ class TestClienteService(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
-            self.assertIn('Datos no validos.', data['mensaje'])
             self.assertIn('fallo', data['estado'])
 
     def test_add_cliente_invalid_json_keys(self):
@@ -73,7 +83,6 @@ class TestClienteService(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
-            self.assertIn('Datos no validos.', data['mensaje'])
             self.assertIn('fallo', data['estado'])
 
     def test_add_cliente_duplicate_email(self):
@@ -84,11 +93,11 @@ class TestClienteService(BaseTestCase):
                 '/clients',
                 data=json.dumps({
                     'nombre': 'abel',
-                    'apellidos': 'abel huanca',
-                    'dni': '51452452',
+                    'apellidos': 'huanca',
+                    'dni': '514',
                     'sexo': 'F',
-                    'celular': '985224855',
-                    'email': 'abel.huanca@upeu.edu.pe'
+                    'celular': '985',
+                    'email': 'huanca@upeu.edu.pe'
                 }),
                 content_type='application/json',
             )
@@ -96,28 +105,33 @@ class TestClienteService(BaseTestCase):
                 '/clients',
                 data=json.dumps({
                     'nombre': 'abel',
-                    'apellidos': 'abel  huanca',
-                    'dni': '51452452',
+                    'apellidos': 'huanca',
+                    'dni': '514',
                     'sexo': 'F',
-                    'celular': '985224855',
-                    'email': 'abel.huanca@upeu.edu.pe'
+                    'celular': '985',
+                    'email': 'huanca@upeu.edu.pe'
                 }),
                 content_type='application/json',
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
-            
+            self.assertIn('fallo', data['estado'])
 
     def test_single_cliente(self):
         """Asegurando de que el usuario individual se comporte
         correctamente."""
-        clients = add_cliente('abel', 'abel  huanca', '51452452', 'F', '985224855', 'abel.huanca@upeu.edu.pe')
+        clients = add_cliente('abel',
+                              'huanca',
+                              '514',
+                              'F',
+                              '985',
+                              'huanca@upeu.edu.pe')
         with self.client:
             response = self.client.get(f'/clients/{clients.id}')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn('abel', data['data']['nombre'])
-            self.assertIn('abel  huanca', data['data']['apellidos'])
+            self.assertIn('huanca', data['data']['apellidos'])
             self.assertIn('satisfactorio', data['estado'])
 
     def test_single_cliente_no_id(self):
@@ -126,6 +140,7 @@ class TestClienteService(BaseTestCase):
             response = self.client.get('/clients/blah')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
+            self.assertIn('fallo', data['estado'])
 
     def test_single_cliente_incorrect_id(self):
         """Asegurando de que se lanze un error si el id no existe."""
@@ -133,11 +148,22 @@ class TestClienteService(BaseTestCase):
             response = self.client.get('/clients/999')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
+            self.assertIn('fallo', data['estado'])
 
     def test_all_clients(self):
         """Asegurarse de que todos los usuarios se comporte correctamente."""
-        add_cliente('abel', 'abel  huanca', '51452452', 'F', '985224855', 'abel.huanca@upeu.edu.pe')
-        add_cliente('zosimo', 'santos gutarra', '5645674', 'F', '985224855', 'zosimo.huanca@upeu.edu.pe')
+        add_cliente('abel',
+                    'huanca',
+                    '514',
+                    'F',
+                    '985',
+                    'huanca@upeu.edu.pe')
+        add_cliente('zosimo',
+                    'gutarra',
+                    '564',
+                    'F',
+                    '985',
+                    'huanca@upeu.edu.pe')
         with self.client:
             response = self.client.get('/clients')
             data = json.loads(response.data.decode())
@@ -145,10 +171,10 @@ class TestClienteService(BaseTestCase):
             self.assertEqual(len(data['data']['clients']), 2)
             self.assertIn('abel', data['data']['clients'][0]['nombre'])
             self.assertIn(
-                'abel  huanca', data['data']['clients'][0]['apellidos'])
+                'huanca', data['data']['clients'][0]['apellidos'])
             self.assertIn('zosimo', data['data']['clients'][1]['nombre'])
             self.assertIn(
-                'santos gutarra', data['data']['clients'][1]['apellidos'])
+                'gutarra', data['data']['clients'][1]['apellidos'])
             self.assertIn('satisfactorio', data['estado'])
 
     def test_main_no_cliente(self):
@@ -160,8 +186,18 @@ class TestClienteService(BaseTestCase):
     def test_main_with_cliente(self):
         """Ensure the main route behaves correctly when users have been
         added to the database."""
-        add_cliente('abel', 'abel  huanca', '51452452', 'F', '985224855', 'abel.huanca@upeu.edu.pe')
-        add_cliente('zosimo', 'santos gutarra', '5645674', 'F', '985224855', 'zosimo.huanca@upeu.edu.pe')
+        add_cliente('abel',
+                    'huanca',
+                    '514',
+                    'F',
+                    '985',
+                    'huanca@upeu.edu.pe')
+        add_cliente('zosimo',
+                    'gutarra',
+                    '564',
+                    'F',
+                    '985',
+                    'huanca@upeu.edu.pe')
         with self.client:
             response = self.client.get('/')
             self.assertEqual(response.status_code, 200)
@@ -171,7 +207,12 @@ class TestClienteService(BaseTestCase):
         with self.client:
             response = self.client.post(
                 '/',
-                data=dict(nombre='abel', apellidos='pongo ', dni='71545511', sexo='M', celular='55555653', email='abel.huanca@upeu.edu.pe'),
+                data=dict(nombre='abel',
+                          apellidos='huanca ',
+                          dni='514',
+                          sexo='F',
+                          celular='985',
+                          email='huanca@upeu.edu.pe'),
                 follow_redirects=True
             )
             self.assertEqual(response.status_code, 200)

@@ -8,10 +8,10 @@ from project import db
 from sqlalchemy import exc
 
 
-clients_blueprint = Blueprint('clients', __name__, template_folder='./templates')
+cli_blueprint = Blueprint('clients', __name__, template_folder='./templates')
 
 
-@clients_blueprint.route('/clients/ping', methods=['GET'])
+@cli_blueprint.route('/clients/ping', methods=['GET'])
 def ping_pong():
     return jsonify({
         'estado': 'satisfactorio',
@@ -19,7 +19,7 @@ def ping_pong():
     })
 
 
-@clients_blueprint.route('/clients', methods=['POST'])
+@cli_blueprint.route('/clients', methods=['POST'])
 def add_cliente():
     post_data = request.get_json()
     response_object = {
@@ -37,19 +37,24 @@ def add_cliente():
     try:
         client = Cliente.query.filter_by(nombre=nombre).first()
         if not client:
-            db.session.add(Cliente(nombre=nombre, apellidos=apellidos, dni=dni, sexo=sexo, celular=celular, email=email))
+            db.session.add(Cliente(nombre=nombre,
+                                   apellidos=apellidos,
+                                   dni=dni,
+                                   sexo=sexo,
+                                   celular=celular,
+                                   email=email))
             db.session.commit()
             response_object['estado'] = 'satisfactorio'
             return jsonify(response_object), 201
         else:
-            
+
             return jsonify(response_object), 400
     except exc.IntegrityError as e:
         db.session.rollback()
         return jsonify(response_object), 400
 
 
-@clients_blueprint.route('/clients/<client_id>', methods=['GET'])
+@cli_blueprint.route('/clients/<client_id>', methods=['GET'])
 def get_single_client(client_id):
     """Obteniendo detalles de un unico usuario"""
     response_object = {
@@ -79,7 +84,7 @@ def get_single_client(client_id):
         return jsonify(response_object), 404
 
 
-@clients_blueprint.route('/clients', methods=['GET'])
+@cli_blueprint.route('/clients', methods=['GET'])
 def get_all_clientes():
     """Get all users"""
     response_object = {
@@ -91,7 +96,7 @@ def get_all_clientes():
     return jsonify(response_object), 200
 
 
-@clients_blueprint.route('/', methods=['GET', 'POST'])
+@cli_blueprint.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         nombre = request.form['nombre']
@@ -100,7 +105,12 @@ def index():
         sexo = request.form['sexo']
         celular = request.form['celular']
         email = request.form['email']
-        db.session.add(Cliente(nombre=nombre, apellidos=apellidos, dni=dni, sexo=sexo, celular=celular, email=email))
+        db.session.add(Cliente(nombre=nombre,
+                               apellidos=apellidos,
+                               dni=dni,
+                               sexo=sexo,
+                               celular=celular,
+                               email=email))
         db.session.commit()
     clients = Cliente.query.all()
     return render_template('index.html', clients=clients)

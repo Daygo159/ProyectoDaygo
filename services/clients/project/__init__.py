@@ -31,8 +31,8 @@ def create_app(script_info=None):
     toolbar.init_app(app)
 
     # registro blueprints
-    from project.api.clients import clients_blueprint
-    app.register_blueprint(clients_blueprint)
+    from project.api.clients import cli_blueprint
+    app.register_blueprint(cli_blueprint)
 
     # contexto de shell for flask cli
     @app.shell_context_processor
